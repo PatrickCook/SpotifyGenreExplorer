@@ -10,7 +10,7 @@ export default class SpotifyLogin extends Component {
     const {children} = this.props;
     return (
       <div className="spotify-login">
-        <h1>Topify</h1>
+        <h1>Artist Genre Explorer</h1>
         <div className="page-content">
           <p>Automatically generate playlists with your favorite songs</p>
           {children}

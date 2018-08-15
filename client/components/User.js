@@ -1,7 +1,20 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {getMyInfo, getTopTracks, setTokens} from '../actions/actions';
-import {Form, FormGroup, ControlLabel, FormControl, Button, Col} from 'react-bootstrap';
+import {
+   getMyInfo,
+   getTopTracks,
+   setTokens,
+   setErrorMsg,
+   getArtistInfo
+} from '../actions/actions';
+import {
+   Form,
+   FormGroup,
+   ControlLabel,
+   FormControl,
+   Button,
+   Col
+} from 'react-bootstrap';
 
 /**
  * Our user page
@@ -27,46 +40,52 @@ class User extends Component {
    }
 
    handleClick() {
-      console.log(this.pName.value, this.pSize.value)
-      this.props.dispatch(getTopTracks({
-         id: this.props.user.id,
-         name: this.pName.value || "Refined Palette Medium",
-         range: "short_term",
-         size: this.pSize.value || 10
-      }));
+      const {dispatch, params} = this.props;
+
+      if (this.artistSearchText.value) {
+         dispatch(getArtistInfo({
+            artistSearchText: this.artistSearchText.value,
+         }));
+      } else {
+         dispatch(
+            setErrorMsg("Don't forget to fill in artist name!")
+         );
+      }
    }
 
+/**
+  * TODO: figure out how the artist information is null. Happens somewhere near
+  * the action -> reducer sequence
+  */
    /** Render the user's info */
    render() {
-      const {loading, tracks} = this.props
+      const {loading, artists, errorMsg} = this.props
+      const topArtist = artists ? artists.items[0].join(", ") : "No results"
       // if we're still loading, indicate such
-      if (loading) {
-         return <h2>Loading...</h2>;
-      }
+      console.log( topArtist )
+
+
       return (
 
             <Form horizontal>
                <FormGroup >
+                  <h2>{ errorMsg }</h2>
+
                   <Col componentClass={ControlLabel} sm={2}>
-                     Playlist Name
+                     Artist Name
                   </Col>
                   <Col sm={10}>
-                     <FormControl inputRef={ref => { this.pName = ref; }} type="text" placeholder="Awesome Tunes"/>
+                     <FormControl
+                     inputRef={
+                        ref => { this.artistSearchText = ref; }}
+                        type="text"
+                     />
                   </Col>
                </FormGroup>
-
-               <FormGroup >
-                  <Col componentClass={ControlLabel} sm={2}>
-                     Playlist Size
-                  </Col>
-                  <Col sm={10}>
-                     <FormControl inputRef={ref => { this.pSize = ref; }} type="number" placeholder="10"/>
-                  </Col>
-               </FormGroup>
-
+               <h2> {topArtist} </h2>
                <FormGroup>
                   <Col smOffset={2} sm={10}>
-                     <Button onClick={this.handleClick.bind(this)} type="submit">Sign in</Button>
+                     <Button onClick={this.handleClick.bind(this)} type="submit">Search Artists</Button>
                   </Col>
                </FormGroup>
             </Form>

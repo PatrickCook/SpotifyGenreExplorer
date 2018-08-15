@@ -9,6 +9,8 @@ export const SPOTIFY_ME_FAILURE = 'SPOTIFY_ME_FAILURE';
 export const SPOTIFY_TOP_BEGIN = 'SPOTIFY_TOP_BEGIN';
 export const SPOTIFY_TOP_SUCCESS = 'SPOTIFY_TOP_SUCCESS';
 export const SPOTIFY_TOP_FAILURE = 'SPOTIFY_TOP_FAILURE';
+export const SPOTIFY_ERROR_MSG = 'SPOTIFY_ERROR_MSG';
+export const SPOTIFY_GENRE_SUCCESS = 'SPOTIFY_GENRE_SUCCESS';
 
 /** set the app's access and refresh tokens */
 export function setTokens({accessToken, refreshToken}) {
@@ -18,7 +20,13 @@ export function setTokens({accessToken, refreshToken}) {
   return { type: SPOTIFY_TOKENS, accessToken, refreshToken };
 }
 
-/* get the user's info from the /me api */
+export function setErrorMsg ( message ) {
+   return dispatch => {
+      dispatch ({ type: SPOTIFY_ERROR_MSG, errorMsg: message });
+   }
+}
+/* get the user's info from the me api */
+
 export function getMyInfo() {
   return dispatch => {
     dispatch({ type: SPOTIFY_ME_BEGIN});
@@ -30,11 +38,23 @@ export function getMyInfo() {
   };
 }
 
+export function getArtistInfo(options) {
+   return dispatch => {
+     dispatch({ type: SPOTIFY_ME_BEGIN});
+     spotifyApi.searchArtists(options.artistSearchText).then(data => {
+        console.log('Search artists by "Love"', data);
+        dispatch({ type: SPOTIFY_GENRE_SUCCESS, artists: data.artists });
+     }).catch(e => {
+      dispatch({ type: SPOTIFY_ME_FAILURE, error: e });
+     });
+   };
+}
+
 /*
-id: this.props.user.id,
-name: this.refs.playlistName.value,
-range: "medium_term",
-size: this.refs.playlistSize.value
+ * id: this.props.user.id,
+ * name: this.refs.playlistName.value,
+ * range: "medium_term",
+ * size: this.refs.playlistSize.value
 */
 
 export function getTopTracks(options) {
