@@ -60,7 +60,7 @@ class User extends Component {
    /** Render the user's info */
    render() {
       const {loading, artists, errorMsg} = this.props
-      const topArtist = artists ? artists.items[0].join(", ") : "No results"
+      const topArtist = artists ? artists.items[0].genres.join(", ") : "No results"
       // if we're still loading, indicate such
       console.log( topArtist )
 
